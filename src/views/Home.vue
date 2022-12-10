@@ -1,20 +1,31 @@
-<script setup></script>
+<script setup>
+import { reactive, onMounted } from "vue";
+import api from "../plugin/Api";
+import Mycard from "../components/Cardproduct.vue";
+
+const data = reactive({
+  product: [],
+});
+
+const getdata = async () => {
+  await api.get("/buyer/product?page=1&per_page=100").then((response) => {
+    data.product = response.data;
+    console.log(response.data);
+  });
+};
+
+onMounted(() => {
+  getdata();
+});
+</script>
 <template>
   <main>
-    <div class="car">
-      <div class="image">
-        <img src="../assets/images.jpg" alt="" />
-      </div>
-      <div class="image">
-        <img src="../assets/images.jpg" alt="" />
-      </div>
-      <div class="image">
-        <img src="../assets/images.jpg" alt="" />
-      </div>
-    </div>
+    <img src="../assets/buku.webp" alt="" />
+    <img src="../assets/buku.webp" alt="" />
+    <img src="../assets/buku.webp" alt="" />
   </main>
   <aside>
-    <h3>Telusuri Katagori</h3>
+    <h5>Telusuri Katagori</h5>
     <div class="filter">
       <button>🔍 Semua</button>
       <button>🔍 Semua</button>
@@ -23,30 +34,39 @@
       <button>🔍 Semua</button>
       <button>🔍 Semua</button>
     </div>
-    <div class="box">
-      <div class="card" style="max-width: 181.33px; height: auto">
-        <img src="../assets/jam tangan.jfif" class="card-img-top" alt="..." />
-        <div class="card-body">
-          <h3>Jam tangan Casio</h3>
-          <p class="card-text">Aksesoris</p>
-          <h3>Rp 230.000</h3>
-        </div>
+    <router-link to="producthalaman">
+      <div class="wrap">
+        <Mycard
+          v-for="item in data.product"
+          :key="item.id"
+          :image="item.image_url"
+          :location="item.location"
+          :Categories="item.Categories"
+          :base_price="item.base_price"
+        />
       </div>
-    </div>
+    </router-link>
   </aside>
+  <footer class="fixed-bottom">
+    <router-link to="/infoproduct"
+      ><button><i class="bi bi-plus"></i>Jual</button></router-link
+    >
+  </footer>
 </template>
 <style scoped>
-main .car {
+main {
+  width: 72%;
+  margin: 20px auto;
   display: flex;
   justify-content: center;
-  align-items: center;
+  gap: 4px;
 }
 main img {
-  width: 30rem;
-  margin-top: 20px;
+  width: 50rem;
+  height: 10rem;
 }
 aside {
-  width: 85%;
+  width: 72%;
   margin: 20px auto;
   height: auto;
 }
@@ -54,9 +74,10 @@ aside .filter {
   margin-top: 10px;
 }
 aside .filter button {
-  padding: 5px 15px;
+  padding: 2px 10px;
   margin-right: 10px;
   border-radius: 12px;
+  font-size: 0.8rem;
   color: black;
   background-color: #e2d4f0;
 }
@@ -64,23 +85,41 @@ aside .filter button:hover {
   background-color: #7126b5;
   color: white;
 }
-aside .box {
-  margin: 10px 15px;
+aside .wrap {
   display: flex;
   width: 100%;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+aside .box {
+  margin: 10px 5px;
+  display: flex;
 }
 aside .box .card {
-  margin-right: 15px;
   display: flex;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.432);
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.637);
 }
 aside .box .card img {
   width: 100%;
-  height: 150px;
+  max-height: 8rem;
   cursor: pointer;
   transition: 400ms;
 }
-.card-body h3 {
-  font-size: 16px;
+.card-body h5,
+p {
+  font-size: 0.9rem;
+}
+footer {
+  bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+footer button {
+  background-color: #7126b5;
+  border: #7126b5;
+  font-size: 1rem;
+  color: white;
+  border-radius: 10px;
+  padding: 3px 10px;
 }
 </style>

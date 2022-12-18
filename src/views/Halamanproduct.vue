@@ -1,25 +1,45 @@
-<script setup></script>
+<script setup>
+import { onMounted, reactive } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import api from "../plugin/Api";
+
+const detail = reactive({
+  product: [],
+});
+// router back
+const router = useRouter();
+// menangkap id dari componen semuacategori
+const idDetailItem = useRoute().params.id;
+
+const getDetailItem = async () => {
+  await api.get("/buyer/product/" + idDetailItem).then((Response) => {
+    detail.product = Response.data;
+    console.log(Response.data);
+  });
+};
+onMounted(() => {
+  getDetailItem();
+});
+</script>
 <template>
-  <div class="container d-flex">
-    <div class="left">
-      <router-link to="/daftarjual">
-        <i class="bi bi-arrow-left-short"></i
-      ></router-link>
+  <div class="ward">
+    <div class="close">
+      <a @click="router.back"> <i class="bi bi-arrow-left-short"></i></a>
     </div>
     <div class="card">
-      <img src="../assets/jam tangan.jfif" class="card-img-top" alt="..." />
+      <img :src="detail.product.image_url" class="card-img-top" alt="..." />
       <div class="card-body">
-        <p class="card-text">
-          Some quick example text to build on the card title and make up the
-          bulk of the card's content.Some quick example text to build on the
-          card title and make up the bulk of the card's content.Some quick
-          example text to build on the card title and make up the bulk of the
-          card's content.Some quick example text to build on the card title and
-          make up the bulk of the card's content.Some quick example text to
-          build on the card title and make up the bulk of the card's
-          content.Some quick example text to build on the card title and make up
-          the bulk of the card's content.
+        <p v-for="item in detail.product.Categories" :key="item.id">
+          Name product : {{ item.name }}
         </p>
+        <p class="card-text">name id : {{ detail.product.name }}</p>
+        <p class="card-text">description : {{ detail.product.description }}</p>
+        <p class="card-text">base_price : {{ detail.product.base_price }}</p>
+        <p class="card-text">location : {{ detail.product.location }}</p>
+        <p class="card-text">user_id : {{ detail.product.user_id }}</p>
+        <p class="card-text">status : {{ detail.product.status }}</p>
+        <p class="card-text">createdAt : {{ detail.product.createdAt }}</p>
+        <p class="card-text">updatedAt : {{ detail.product.updatedAt }}</p>
       </div>
     </div>
     <div class="word">
@@ -28,7 +48,7 @@
         <p>Aksesoris</p>
         <h5 style="top: -8px">Rp 250.000</h5>
         <button>Terbitkan</button><br />
-        <button>Edit</button>
+        <router-link to="infoproduct"><button>Edit</button></router-link>
       </div>
       <div class="bottom d-flex">
         <img
@@ -45,13 +65,15 @@
   </div>
 </template>
 <style scoped>
-.container {
-  margin: 15px auto;
+.ward {
+  margin: 30px auto;
   width: 80%;
+  display: flex;
+  justify-content: center;
 }
-.left {
+.close {
   font-size: 2rem;
-  margin-right: 8rem;
+  margin-right: 1.5rem;
 }
 .card {
   width: 40%;
@@ -59,11 +81,10 @@
 
 .word {
   margin-left: 15px;
-  width: 60%;
 }
 .word .top {
   box-shadow: 0 0 4px black;
-  max-width: 18rem;
+  width: 18rem;
   height: 13rem;
   padding: 5px 12px;
 }
@@ -82,7 +103,7 @@
   height: 3.5rem;
   justify-content: flex-start;
   align-items: center;
-  max-width: 18rem;
+  width: 18rem;
 }
 .bottom img {
   border-radius: 50%;
@@ -93,5 +114,56 @@
 .bottom h5 {
   font-size: 15px;
   top: 0.8rem;
+}
+@media screen and (max-width: 414px) {
+  .ward {
+    margin: 0 auto;
+    display: block;
+    width: 90%;
+  }
+  .left {
+    font-size: 2rem;
+  }
+  .card {
+    width: 100%;
+  }
+
+  .word {
+    margin: 10px auto;
+    width: 100%;
+  }
+  .word h5,
+  p {
+    font-size: 0.7rem;
+  }
+  .word .top {
+    width: 100%;
+  }
+  .word .top button {
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: rgb(0, 0, 0);
+  }
+  .word .top button:hover {
+    background-color: #431172;
+  }
+  .bottom {
+    margin-top: 5px;
+    box-shadow: 0 0 4px black;
+    padding: 0 15px;
+    height: 3.5rem;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+  }
+  .bottom img {
+    width: 2rem;
+    height: 2rem;
+    margin-right: 10px;
+  }
+  .bottom h5 {
+    font-size: 0.7rem;
+    top: 0.8rem;
+  }
 }
 </style>

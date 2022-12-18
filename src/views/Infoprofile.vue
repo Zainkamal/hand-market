@@ -1,8 +1,23 @@
-<script setup></script>
+<script setup>
+import { useRouter } from "vue-router";
+
+const back = useRouter();
+</script>
 <template>
-  <div class="container">
+  <div class="drop sticky-top zindex-toast">
+    <router-link to="/"
+      ><img src="../assets/21-removebg-preview.png" alt=""
+    /></router-link>
+    <div class="not">
+      <div class="title">
+        <p>Lengkapi Info akun</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="box">
     <div class="left">
-      <router-link to="/"> <i class="bi bi-arrow-left-short"></i></router-link>
+      <a @click="back.back"> <i class="bi bi-arrow-left-short"></i></a>
     </div>
     <div class="right">
       <div class="image"><i class="bi bi-camera"></i></div>
@@ -46,24 +61,48 @@
   </div>
 </template>
 <style scoped>
-.container {
+.drop {
   display: flex;
-  max-width: 45rem;
+  justify-content: space-between;
+  align-items: center;
+  height: 4rem;
+  width: 100%;
+  background-color: rgb(248, 245, 245);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.315);
 }
-.container .left {
+.drop img {
+  width: 6rem;
+  height: 4rem;
+  margin-left: 2rem;
+  position: absolute;
+  top: -30px;
+}
+.drop .not {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+}
+/* .drop .not .title {
+  border: 1px solid black;
+} */
+.box {
+  max-width: 45rem;
+  margin: 0 auto;
+}
+.box .left {
   width: 2rem;
   max-width: 2rem;
-  margin-right: 20px;
 }
-.container .left i {
+.box .left i {
   font-size: 2rem;
   cursor: pointer;
 }
-.container .right {
+.box .right {
   width: 100%;
   padding: 5px 8px;
 }
-.container .right .image {
+.box .right .image {
   width: 96px;
   height: 96px;
   margin: 0 auto;
@@ -75,7 +114,7 @@
   align-items: center;
   cursor: pointer;
 }
-.container .right .image i {
+.box .right .image i {
   margin: 0 auto;
   font-size: 1.5rem;
 }

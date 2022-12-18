@@ -1,41 +1,79 @@
 <script setup>
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, watchEffect } from "vue";
 import api from "../plugin/Api";
+import kategori from "../plugin/Api";
 import Mycard from "../components/Cardproduct.vue";
+import { useRouter } from "vue-router";
+import Swiper from "../components/Swiper.vue";
 
 const data = reactive({
   product: [],
+  kategori: [],
+  perPage: 30,
+  idkategori: 0,
 });
 
 const getdata = async () => {
-  await api.get("/buyer/product?page=1&per_page=100").then((response) => {
-    data.product = response.data;
-    console.log(response.data);
-  });
+  await api
+    .get("/buyer/product", {
+      params: {
+        page: 1,
+        per_page: data.perPage,
+        category_id: data.idkategori || "",
+      },
+    })
+    .then((response) => {
+      data.product = response.data;
+      console.log(response.data);
+    });
 };
 
-onMounted(() => {
+const getkategori = async () => {
+  await kategori.get("/seller/category").then((response) => {
+    data.kategori = response.data;
+  });
+};
+const loadMore = () => {
+  data.perPage += 30;
+};
+
+watchEffect(() => {
   getdata();
 });
+
+onMounted(() => {
+  getkategori();
+});
+const router = useRouter();
 </script>
 <template>
   <main>
-    <img src="../assets/buku.webp" alt="" />
-    <img src="../assets/buku.webp" alt="" />
-    <img src="../assets/buku.webp" alt="" />
+    <Swiper />
   </main>
   <aside>
     <h5>Telusuri Katagori</h5>
     <div class="filter">
-      <button>🔍 Semua</button>
-      <button>🔍 Semua</button>
-      <button>🔍 Semua</button>
-      <button>🔍 Semua</button>
-      <button>🔍 Semua</button>
-      <button>🔍 Semua</button>
+      <button
+        class="search"
+        @click="data.idkategori = 0"
+        :class="data.idkategori == 0 ? 'bg-active' : 'bg-unactive'"
+      >
+        🔍 Semua
+      </button>
+      <button
+        v-for="(item, index) in data.kategori"
+        :key="index"
+        @click="data.idkategori = item.id"
+        :class="data.idkategori == item.id ? 'bg-active' : 'bg-unactive'"
+        class="search"
+      >
+        🔍
+        {{ item.name }}
+      </button>
     </div>
-    <router-link to="producthalaman">
-      <div class="wrap">
+
+    <div class="wrap">
+      <div class="row">
         <Mycard
           v-for="item in data.product"
           :key="item.id"
@@ -43,9 +81,13 @@ onMounted(() => {
           :location="item.location"
           :Categories="item.Categories"
           :base_price="item.base_price"
+          @click="router.push('/product/' + item.id)"
         />
       </div>
-    </router-link>
+      <button @click="loadMore" class="clik">
+        <i class="bi bi-plus"></i>Tambah halaman
+      </button>
+    </div>
   </aside>
   <footer class="fixed-bottom">
     <router-link to="/infoproduct"
@@ -55,30 +97,44 @@ onMounted(() => {
 </template>
 <style scoped>
 main {
-  width: 72%;
-  margin: 20px auto;
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-}
-main img {
-  width: 50rem;
-  height: 10rem;
+  width: 90%;
+  margin: 10px auto;
 }
 aside {
-  width: 72%;
+  width: 90%;
   margin: 20px auto;
   height: auto;
 }
 aside .filter {
   margin-top: 10px;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  display: flex;
+  overflow: auto;
+  white-space: nowrap;
 }
-aside .filter button {
-  padding: 2px 10px;
-  margin-right: 10px;
+.filter::-webkit-scrollbar {
+  height: 10px;
+}
+.filter::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: #e2d4f0;
+}
+.filter::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #7126b5;
+}
+
+aside .filter .search {
+  margin: 2px 5px;
   border-radius: 12px;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: black;
+  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2rem;
   background-color: #e2d4f0;
 }
 aside .filter button:hover {
@@ -89,30 +145,26 @@ aside .wrap {
   display: flex;
   width: 100%;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: space-between;
 }
-aside .box {
-  margin: 10px 5px;
+aside .wrap .clik {
+  max-height: 2rem;
+  background-color: #e2d4f0;
+  border: #e2d4f0;
+  border-radius: 10px;
   display: flex;
+  align-items: center;
+  margin-top: 7rem;
 }
-aside .box .card {
-  display: flex;
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.637);
-}
-aside .box .card img {
-  width: 100%;
-  max-height: 8rem;
-  cursor: pointer;
-  transition: 400ms;
-}
-.card-body h5,
-p {
-  font-size: 0.9rem;
+aside .wrap .clik:hover {
+  background-color: #7126b5;
+  color: white;
 }
 footer {
   bottom: 1.5rem;
   display: flex;
   justify-content: center;
+  gap: 5px;
 }
 footer button {
   background-color: #7126b5;
@@ -121,5 +173,25 @@ footer button {
   color: white;
   border-radius: 10px;
   padding: 3px 10px;
+}
+
+@media (max-width: 576px) {
+  aside {
+    margin-top: 0;
+  }
+  aside .filter {
+    margin-top: 0;
+  }
+  aside h5 {
+    font-size: 1rem;
+  }
+  aside .filter .search {
+    margin: 1px 3px;
+    font-size: 0.5rem;
+    height: 1.5rem;
+  }
+  .filter::-webkit-scrollbar {
+    height: 6px;
+  }
 }
 </style>

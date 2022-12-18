@@ -15,10 +15,20 @@ const router = createRouter({
         {
           path: "/daftarjual",
           component: () => import("../views/Daftarjual.vue"),
-        },
-        {
-          path: "/semuacategori",
-          component: () => import("../components/Semuacategori.vue"),
+          children: [
+            {
+              path: "",
+              component: () => import("../components/Semuacategori.vue"),
+            },
+            {
+              path: "/diminati",
+              component: () => import("../components/Diminati.vue"),
+            },
+            {
+              path: "/terjual",
+              component: () => import("../components/Terjual.vue"),
+            },
+          ],
         },
       ],
     },
@@ -37,7 +47,7 @@ const router = createRouter({
       component: () => import("../views/Infoprofile.vue"),
     },
     {
-      path: "/halamanproduct",
+      path: "/halaman/:id",
       component: () => import("../views/Halamanproduct.vue"),
     },
     {
@@ -45,8 +55,12 @@ const router = createRouter({
       component: () => import("../views/Infoproduct.vue"),
     },
     {
-      path: "/producthalaman",
+      path: "/product/:id",
       component: () => import("../views/Producthalaman.vue"),
+    },
+    {
+      path: "/infopenawaran",
+      component: () => import("../views/Infopenawaran.vue"),
     },
   ],
 });

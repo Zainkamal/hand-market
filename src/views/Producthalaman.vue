@@ -1,23 +1,77 @@
-<script setup></script>
+<script setup>
+import axios from "axios";
+import Swal from "sweetalert2";
+import { reactive, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import api from "../plugin/Api";
+
+const router = useRouter();
+
+const detail = reactive({
+  product: [],
+});
+
+const idDetailItem = useRoute().params.id;
+const getDetailItem = async () => {
+  await api.get("/buyer/product/" + idDetailItem).then((Response) => {
+    detail.product = Response.data;
+    console.log(Response.data);
+  });
+};
+onMounted(() => {
+  getDetailItem();
+});
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top",
+  showConfirmButton: false,
+  timer: 3000,
+  background: "green",
+  color: "white",
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.addEventListener("mouseenter", Swal.stopTimer);
+    toast.addEventListener("mouseleave", Swal.resumeTimer);
+  },
+});
+const alert = () => {
+  Toast.fire({
+    icon: "success",
+    title: "Signed in successfully",
+  });
+};
+</script>
 <template>
-  <div class="container d-flex">
-    <div class="left">
-      <router-link to="/"> <i class="bi bi-arrow-left-short"></i></router-link>
+  <div class="warp">
+    <div class="close">
+      <a @click="router.back"><i class="bi bi-arrow-left-short"></i></a>
     </div>
     <div class="card">
-      <img src="../assets/jam tangan.jfif" class="card-img-top" alt="..." />
+      <img :src="detail.product.image_url" class="card-img-top" alt="..." />
       <div class="card-body">
-        <p class="card-text">
-          Some quick example text to build on the card title and make up the
-          bulk of the card's content.Some quick example text to build on the
-          card title and make up the bulk of the card's content.Some quick
-          example text to build on the card title and make up the bulk of the
-          card's content.Some quick example text to build on the card title and
-          make up the bulk of the card's content.Some quick example text to
-          build on the card title and make up the bulk of the card's
-          content.Some quick example text to build on the card title and make up
-          the bulk of the card's content.
-        </p>
+        <span v-for="item in detail.product.Categories" :key="item.id">
+          Name product : {{ item.name }} </span
+        ><br />
+        <span>name id : {{ detail.product.name }}</span
+        ><br />
+        <span>description :{{ detail.product.description }}</span
+        ><br />
+        <span>
+          base_price :
+          {{ detail.product.base_price }}
+        </span>
+        <span>location :{{ detail.product.location }}</span
+        ><br />
+        <span>user_id : {{ detail.product.user_id }}</span
+        ><br />
+        <span>status : {{ detail.product.status }}</span
+        ><br />
+        <span>createdAt : {{ detail.product.createdAt }}</span
+        ><br />
+        <span>
+          updatedAt :
+          {{ detail.product.updatedAt }}
+        </span>
       </div>
     </div>
     <div class="word">
@@ -77,6 +131,7 @@
                   <p>Bali</p>
                 </div>
               </div>
+
               <div class="mb-3 m-3" style="top: -8px">
                 <label for="exampleFormControlInput1" class="form-label"
                   >Harga Tawaran</label
@@ -88,8 +143,11 @@
                   placeholder="Nominal"
                 />
               </div>
+
               <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Kirim</button>
+                <button @click="alert" type="button" class="btn btn-primary">
+                  Kirim
+                </button>
               </div>
             </div>
           </div>
@@ -99,7 +157,6 @@
         <img
           src="../assets/Among_Us_Background_Keren-removebg-preview.png"
           alt=""
-          style="width: 3rem; height: 3rem"
         />
         <div class="nama">
           <h5>Alan Bin Suroso</h5>
@@ -110,21 +167,29 @@
   </div>
 </template>
 <style scoped>
-.container {
-  margin: 15px auto;
+.warp {
+  margin: 2em auto;
   width: 80%;
+  display: flex;
+  justify-content: center;
 }
-.left {
+.close {
   font-size: 2rem;
-  margin-right: 8rem;
+  margin-right: 2rem;
+}
+.close a {
+  cursor: pointer;
 }
 .card {
   width: 40%;
 }
+.card img {
+  max-height: 15rem;
+}
 
 .word {
   margin-left: 15px;
-  width: 60%;
+  width: auto;
 }
 .word .top {
   box-shadow: 0 0 4px black;
@@ -158,9 +223,66 @@
   box-shadow: 0 0 4px black;
   border: 1px solid black;
   margin-right: 10px;
+  width: 3rem;
+  height: 3rem;
 }
 .bottom h5 {
   font-size: 15px;
   top: 0.8rem;
+}
+
+@media screen and (max-width: 414px) {
+  .warp {
+    display: block;
+  }
+  .close {
+    font-size: 1.3rem;
+  }
+  .close a {
+    cursor: pointer;
+  }
+  .card {
+    margin: 0 auto;
+    width: 80%;
+  }
+  .card-body {
+    font-size: 0.7em;
+    top: -10px;
+  }
+
+  .word {
+    margin: 10px auto;
+    width: 80%;
+  }
+  .word h5,
+  p {
+    font-size: 0.7rem;
+  }
+  .word .top button {
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: white;
+  }
+  .word .top button:hover {
+    background-color: #431172;
+  }
+  .bottom {
+    margin-top: 5px;
+    box-shadow: 0 0 4px black;
+    padding: 0 15px;
+    height: 3.5rem;
+    justify-content: flex-start;
+    align-items: center;
+    max-width: 18rem;
+  }
+  .bottom img {
+    width: 2rem;
+    height: 2rem;
+    margin-right: 10px;
+  }
+  .bottom h5 {
+    font-size: 0.7rem;
+    top: 0.8rem;
+  }
 }
 </style>

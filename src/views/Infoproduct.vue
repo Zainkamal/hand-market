@@ -3,6 +3,26 @@ import { reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../store";
 import kategori from "../plugin/Api";
+import * as Yup from "yup";
+import { Form, Field, ErrorMessage } from "vee-validate";
+
+const schema = Yup.object().shape({
+  name: Yup.string()
+    .required("nama wajib di isi")
+    .typeError("data harap di sesuaikan"),
+  base_price: Yup.number()
+    .required("nama wajib di isi")
+    .typeError("data harap di sesuaikan"),
+  location: Yup.string()
+    .required("nama wajib di isi")
+    .typeError("data harap di sesuaikan"),
+  description: Yup.string()
+    .required("nama wajib di isi")
+    .typeError("data harap di sesuaikan"),
+  foto: Yup.string()
+    .required("nama wajib di isi")
+    .typeError("data harap di sesuaikan"),
+});
 
 const data = reactive({
   kategori: [],
@@ -26,7 +46,7 @@ const doaddseller = () => {
   formData.append("category_ids", formseller.category_ids);
   formData.append("image", formseller.image);
   formData.append("location", formseller.location);
-  useAuthStore().addseller(formData);
+  useAuthStore().addproduct(formData);
 };
 
 const setFile = (e) => {
@@ -53,94 +73,133 @@ const back = useRouter();
     <div class="left">
       <a @click="back.back"> <i class="bi bi-arrow-left-short"></i></a>
     </div>
-    <form class="right" @submit.prevent="doaddseller">
+    <Form
+      class="right"
+      @submit="doaddseller"
+      :validation-schema="schema"
+      v-slot="{ errors }"
+    >
       <div class="mb-3">
         <label for="formGroupExampleInput" class="form-label"
           >Nama Product*</label
         >
-        <input
+        <Field
           type="text"
           class="form-control"
           id="formGroupExampleInput"
           v-model="formseller.name"
           placeholder="Nama Product"
+          name="name"
+          :class="{ 'is-invalid': errors.name }"
         />
+        <ErrorMessage name="name" class="invalid-feedback"></ErrorMessage>
       </div>
       <div class="mb-3">
         <label for="formGroupExampleInput2" class="form-label"
           >Harga Product*</label
         >
-        <input
+        <Field
           type="number"
           class="form-control"
           v-model="formseller.base_price"
           id="formGroupExampleInput2"
           placeholder="Harga Product"
+          name="base_price"
+          :class="{ 'is-invalid': errors.base_price }"
         />
+        <ErrorMessage name="base_price" class="invalid-feedback"></ErrorMessage>
       </div>
-      <select
-        class="form-select"
-        aria-label="Default select example"
-        v-model="formseller.category_ids"
-        multiple
-      >
-        <option selected>Pilih Katagori*</option>
-        <option :value="item.id" v-for="(item, index) in data.kategori">
-          {{ item.name }}
-        </option>
-      </select>
+      <div class="mb-3">
+        <label class="form-label">Kategori*</label>
+        <select
+          class="form-select"
+          aria-label="Default select example"
+          v-model="formseller.category_ids"
+          multiple
+        >
+          <option selected>Pilih Katagori*</option>
+          <option :value="item.id" v-for="(item, index) in data.kategori">
+            {{ item.name }}
+          </option>
+        </select>
+      </div>
       <div class="mb-3">
         <label for="formGroupExampleInput" class="form-label">location*</label>
-        <input
+        <Field
           type="text"
           class="form-control"
           id="formGroupExampleInput"
           v-model="formseller.location"
           placeholder="Nama Product"
+          name="location"
+          :class="{ 'is-invalid': errors.location }"
         />
+        <ErrorMessage name="location" class="invalid-feedback"></ErrorMessage>
       </div>
       <div class="mb-3">
         <label for="exampleFormControlTextarea1" class="form-label"
           >Descripsi*</label
         >
-        <textarea
+        <Field
+          as="textarea"
           class="form-control"
           id="exampleFormControlTextarea1"
           rows="3"
           v-model="formseller.description"
           placeholder="Descripsi"
-        ></textarea>
+          name="description"
+          :class="{ 'is-invalid': errors.description }"
+        />
+        <ErrorMessage
+          name="description"
+          class="invalid-feedback"
+        ></ErrorMessage>
       </div>
-      <input
+      <div
+        v-if="formseller.image"
+        class="position-relative"
+        style="width: fit-content"
+      >
+        <span
+          v-if="formseller.image"
+          @click="
+            formseller.image = null;
+            formseller.url_image = null;
+          "
+          type="button"
+          style="
+            z-index: 100;
+            position: absolute;
+            right: 0;
+            background-color: red;
+            color: white;
+            padding: 5px;
+            font-size: 9px;
+            border-radius: 100%;
+          "
+        >
+          ✖
+        </span>
+        <img :src="formseller.url_image" alt="" width="300" />
+      </div>
+      <label v-else class="image" for="fotoProduct" type="button">
+        <i class="bi bi-plus"></i>
+      </label>
+      <Field
         type="file"
         name="foto"
         id="fotoProduct"
         class="d-none"
         @change="setFile"
+        :class="{ 'is-invalid': errors.foto }"
       />
-      <img
-        v-if="formseller.image"
-        :src="formseller.url_image"
-        alt=""
-        width="100"
-      />
+      <ErrorMessage name="foto" class="invalid-feedback"></ErrorMessage>
 
-      <label v-else class="image" for="fotoProduct" type="button">
-        <i class="bi bi-plus"></i>
-      </label>
-      <button
-        @click="
-          formseller.image = null;
-          formseller.url_image = null;
-        "
-      >
-        Batal
-      </button>
       <div class="tombol">
         <button type="button" class="btn">Perview</button>
         <button type="submit" class="btn">Terbitkan</button>
       </div>
-    </form>
+    </Form>
   </div>
 </template>
 <style scoped>

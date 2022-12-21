@@ -4,6 +4,25 @@ import { reactive, onMounted } from "vue";
 import api from "../plugin/Api";
 import NavbarVue from "../components/Navbar.vue";
 import { RouterView } from "vue-router";
+import { useAuthStore } from "../store";
+
+const datauser = reactive({
+  user: {},
+});
+
+const getuser = async () => {
+  await api
+    .get("/auth/user", {
+      headers: {
+        access_token: useAuthStore().gettoken,
+      },
+    })
+    .then((res) => {
+      datauser.user = res.data;
+      console.log(res.data);
+    });
+};
+const avatar = `https://ui-avatars.com/api/?name=${datauser.user.image_url}`;
 
 // alert
 const Toast = Swal.mixin({
@@ -25,6 +44,9 @@ const alert = () => {
     title: "Signed in successfully",
   });
 };
+onMounted(() => {
+  getuser();
+});
 </script>
 <template>
   <div class="wrap">
@@ -33,21 +55,19 @@ const alert = () => {
     </header>
     <main>
       <div class="profil">
-        <img src="../assets/images.jpg" alt="" />
+        <img :src="datauser.user.image_url ?? avatar" alt="" />
         <div class="data">
-          <h3>Nama Penjual</h3>
-          <p>Alan Masyhuri prayono</p>
+          <h3>{{ datauser.user.full_name }}</h3>
+          <p>{{ datauser.user.city ?? "-" }}</p>
         </div>
       </div>
-      <button @click="alert">Edit</button>
+      <!-- <button @click="alert">Edit</button> -->
+      <router-link to="infoprofile"><button>Edit</button></router-link>
     </main>
     <aside>
-      <div class="left">
-        <NavbarVue></NavbarVue>
-      </div>
-      <div class="right d-flex">
-        <RouterView />
-      </div>
+      <NavbarVue></NavbarVue>
+
+      <RouterView />
     </aside>
   </div>
 </template>
@@ -59,6 +79,10 @@ const alert = () => {
 header {
   width: 100%;
   padding-top: 15px;
+}
+aside {
+  display: grid;
+  grid-template-columns: repeat(200px, auto);
 }
 main {
   display: flex;
@@ -95,12 +119,7 @@ main button {
 aside {
   display: flex;
   margin-top: 10px;
-}
-aside .right {
   width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  margin-left: 15px;
 }
 
 @media screen and (max-width: 414px) {
@@ -137,15 +156,6 @@ aside .right {
   aside {
     display: block;
     margin-top: 10px;
-  }
-  aside .left {
-    width: 100%;
-  }
-  aside .right {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    margin-left: 15px;
   }
 }
 </style>

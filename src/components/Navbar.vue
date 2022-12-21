@@ -30,6 +30,7 @@
   padding: 15px 3px 30px 3px;
   max-height: 13rem;
   display: block;
+  margin-right: 2rem;
 }
 .link {
   display: block;

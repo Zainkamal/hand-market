@@ -28,34 +28,65 @@ onMounted(() => {
 const router = useRouter();
 </script>
 <template>
-  <div class="image" @click="router.push('/infoproduct')">
-    <i class="bi bi-plus"></i>
+  <div class="wrap">
+    <div class="row">
+      <div
+        class="col-lg-3 col-md-3 col-sm-6 col-6"
+        v-for="item in data.product"
+        :key="item.id"
+      >
+        <Mycard
+          :image="item.image_url"
+          :name="item.name"
+          :Categories="item.Categories"
+          :base_price="item.base_price"
+          @click="router.push('/halaman/' + item.id)"
+        />
+      </div>
+    </div>
+    <div class="tambah position-fixed bottom-0 end-0">
+      <div class="image" @click="router.push('/infoproduct')">
+        <i class="bi bi-plus"></i>
+      </div>
+    </div>
   </div>
-  <Mycard
-    v-for="item in data.product"
-    :key="item.id"
-    :image="item.image_url"
-    :location="item.location"
-    :Categories="item.Categories"
-    :base_price="item.base_price"
-    @click="router.push('/halaman/' + item.id)"
-  />
 </template>
 <style scoped>
+.wrap {
+  width: 100%;
+  flex-wrap: wrap;
+}
+.row {
+  width: 100%;
+
+  display: flex;
+}
+.tambah {
+  width: 100%;
+  margin: 40px;
+  display: flex;
+  justify-content: end;
+  padding-top: 5rem;
+}
 .image {
-  width: 10rem;
-  background: white;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: blue;
   border: 1px dashed #d0d0d0;
   border-radius: 12px;
   display: flex;
   justify-items: center;
   align-items: center;
+  color: white;
   cursor: pointer;
-  margin-top: 10px;
-  margin-right: 1rem;
 }
 .image i {
   margin: 0 auto;
   font-size: 2.5rem;
+}
+@media screen and (max-width: 414px) {
+  .wrap {
+    justify-content: center;
+  }
 }
 </style>

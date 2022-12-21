@@ -74,19 +74,25 @@ const router = useRouter();
 
     <div class="wrap">
       <div class="row">
-        <Mycard
+        <div
+          class="col-lg-2 col-md-3 col-sm-6 col-6"
           v-for="item in data.product"
           :key="item.id"
-          :image="item.image_url"
-          :location="item.location"
-          :Categories="item.Categories"
-          :base_price="item.base_price"
-          @click="router.push('/product/' + item.id)"
-        />
+        >
+          <!-- :namecategori="item.categories" -->
+          <Mycard
+            :image="item.image_url"
+            :name="item.name"
+            :Categories="item.Categories"
+            :base_price="item.base_price"
+            :description="item.description"
+            @click="router.push('/product/' + item.id)"
+          />
+        </div>
       </div>
-      <button @click="loadMore" class="clik">
-        <i class="bi bi-plus"></i>Tambah halaman
-      </button>
+      <div @click="loadMore" class="clik">
+        <i class="bi bi-plus">Tambah halaman</i>
+      </div>
     </div>
   </aside>
   <footer class="fixed-bottom">

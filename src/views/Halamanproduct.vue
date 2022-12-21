@@ -2,6 +2,7 @@
 import { onMounted, reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import api from "../plugin/Api";
+import { useAuthStore } from "../store";
 
 const detail = reactive({
   product: [],
@@ -12,10 +13,28 @@ const router = useRouter();
 const idDetailItem = useRoute().params.id;
 
 const getDetailItem = async () => {
-  await api.get("/buyer/product/" + idDetailItem).then((Response) => {
-    detail.product = Response.data;
-    console.log(Response.data);
-  });
+  await api
+    .get("/seller/product/" + idDetailItem, {
+      headers: {
+        access_token: useAuthStore().gettoken,
+      },
+    })
+    .then((Response) => {
+      detail.product = Response.data;
+      console.log(Response.data);
+    });
+};
+
+const delet = async () => {
+  await api
+    .delete("/seller/product/" + idDetailItem, {
+      headers: {
+        access_token: useAuthStore().gettoken,
+      },
+    })
+    .then(() => {
+      router.push("/daftarjual");
+    });
 };
 onMounted(() => {
   getDetailItem();
@@ -29,26 +48,26 @@ onMounted(() => {
     <div class="card">
       <img :src="detail.product.image_url" class="card-img-top" alt="..." />
       <div class="card-body">
+        <p class="card-text">name product : {{ detail.product.name }}</p>
         <p v-for="item in detail.product.Categories" :key="item.id">
-          Name product : {{ item.name }}
+          Categories : {{ item.name }}
         </p>
-        <p class="card-text">name id : {{ detail.product.name }}</p>
         <p class="card-text">description : {{ detail.product.description }}</p>
         <p class="card-text">base_price : {{ detail.product.base_price }}</p>
         <p class="card-text">location : {{ detail.product.location }}</p>
         <p class="card-text">user_id : {{ detail.product.user_id }}</p>
         <p class="card-text">status : {{ detail.product.status }}</p>
-        <p class="card-text">createdAt : {{ detail.product.createdAt }}</p>
-        <p class="card-text">updatedAt : {{ detail.product.updatedAt }}</p>
       </div>
     </div>
     <div class="word">
       <div class="top">
-        <h5>Jam Tangan casio</h5>
-        <p>Aksesoris</p>
-        <h5 style="top: -8px">Rp 250.000</h5>
-        <button>Terbitkan</button><br />
+        <h5>{{ detail.product.name }}</h5>
+        <p v-for="item in detail.product.Categories" :key="item.id">
+          Categories : {{ item.name }}
+        </p>
+        <h5 style="top: -8px">Rp {{ detail.product.base_price }}</h5>
         <router-link to="infoproduct"><button>Edit</button></router-link>
+        <button @click="delet(id)">Hapus</button><br />
       </div>
       <div class="bottom d-flex">
         <img
@@ -95,6 +114,7 @@ onMounted(() => {
 }
 .word .top button:hover {
   background-color: #7126b5;
+  color: white;
 }
 .bottom {
   margin-top: 10px;

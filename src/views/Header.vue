@@ -12,7 +12,7 @@ const onlogout = () => {
     <div class="drop">
       <div class="left">
         <router-link to="/"
-          ><img src="../assets/21-removebg-preview.png" alt=""
+          ><img src="../assets/blog-removebg-preview.png" alt=""
         /></router-link>
         <form action="">
           <input type="text" class="form-control" placeholder="🔎 search" />
@@ -109,7 +109,7 @@ const onlogout = () => {
 <style scoped>
 header {
   width: 100%;
-  background-color: rgb(248, 245, 245);
+  background-color: #023b6d;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.315);
 }
 .drop {
@@ -139,7 +139,7 @@ header {
   display: flex;
 }
 .right .icon {
-  color: black;
+  color: white;
   margin: 0 10px;
   font-size: 1.3rem;
 }

@@ -1,6 +1,24 @@
 <script setup>
 import { reactive } from "vue";
 import { useAuthStore } from "../store";
+import * as Yup from "yup";
+import { Form, Field, ErrorMessage } from "vee-validate";
+
+const schema = Yup.object().shape({
+  full_name: Yup.string()
+    .required("Nama wajib di isi")
+    .typeError("Nama wajib di isi"),
+  email: Yup.string()
+    .email("format email salah")
+    .required("email wajib di isi"),
+  password: Yup.string()
+    .required("Silahkan masukan password")
+    .min(6, "Kata sandi harus minimal 6 karakter")
+    .matches(
+      /^(?=.{6,}$)(?=.*[a-z])(?=.*[0-9]).*$/,
+      "Password harus mengandung minimal 1 huruf dan 1 angka"
+    ),
+});
 
 const formDaftar = reactive({
   full_name: "",
@@ -24,39 +42,55 @@ const doRegister = () => {
       <h3>HAND MARKET</h3>
     </div>
     <div class="right">
-      <form @submit.prevent="doRegister">
+      <Form
+        @submit.prevent="doRegister"
+        :validation-schema="schema"
+        v-slot="{ errors }"
+      >
         <h3>Register</h3>
         <div class="mb-3">
           <label for="formGroupExampleInput" class="form-label">Nama</label>
-          <input
+          <Field
             type="text"
             class="form-control"
             id="formGroupExampleInput"
             v-model="formDaftar.full_name"
             placeholder=" Nama Lengkap"
+            name="full_name"
+            :class="{ 'is-invalid': errors.full_name }"
           />
+          <ErrorMessage
+            name="full_name"
+            class="invalid-feedback"
+          ></ErrorMessage>
         </div>
         <div class="mb-3">
           <label for="formGroupExampleInput" class="form-label">Email</label>
-          <input
+          <Field
             type="email"
             class="form-control"
             id="formGroupExampleInput"
             placeholder=" Email"
             v-model="formDaftar.email"
+            name="email"
+            :class="{ 'is-invalid': errors.email }"
           />
+          <ErrorMessage name="email" class="invalid-feedback"></ErrorMessage>
         </div>
         <div class="mb-3">
           <label for="formGroupExampleInput2" class="form-label"
             >Password</label
           >
-          <input
+          <Field
             type="password"
             class="form-control"
             id="formGroupExampleInput2"
             placeholder=" Password"
             v-model="formDaftar.password"
+            name="password"
+            :class="{ 'is-invalid': errors.password }"
           />
+          <ErrorMessage name="password" class="invalid-feedback"></ErrorMessage>
           <button type="submit">Masuk</button>
           <p>
             sudah punyak akun.?<router-link to="/login"
@@ -64,7 +98,7 @@ const doRegister = () => {
             >
           </p>
         </div>
-      </form>
+      </Form>
     </div>
   </main>
 </template>

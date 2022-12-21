@@ -47,7 +47,7 @@ export const useAuthStore = defineStore("auth", {
       localStorage.removeItem("userdata");
       router.push("/");
     },
-    async addseller(payload) {
+    async addproduct(payload) {
       await api
         .post("/seller/product", payload, {
           headers: {
@@ -55,20 +55,23 @@ export const useAuthStore = defineStore("auth", {
           },
         })
         .then((res) => {
-          state.product = res.data;
+          alert("berhasil");
+          router.push("/daftarjual");
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    // async deleteproduct(id) {
-    //   await api
-    //     .delete(`/seller/product/${id}`)
-    //     .then((res) => {
-    //       state.product = state.product.filter((product) => product.id !== id);
-    //     })
-    //     .catch((err) => console.log(err));
-    //   //this.todos = this.todos.filter(todo => todo.id !== id);
-    // },
+    async adduser(payload) {
+      await api
+        .put("/auth/user", payload, {
+          headers: {
+            access_token: this.gettoken,
+          },
+        })
+        .then((res) => {
+          router.push("/daftarjual");
+        });
+    },
   },
 });

@@ -1,10 +1,12 @@
 <script setup>
+import { string } from "yup";
+
 defineProps({
   image: {
     type: String,
     required: true,
   },
-  location: {
+  name: {
     type: String,
     required: true,
   },
@@ -16,21 +18,22 @@ defineProps({
     type: String,
     required: true,
   },
+  description: {
+    type: string,
+    required: true,
+  },
 });
 </script>
 <template>
-  <div class="col-lg-2 col-md-3 col-sm-6 col-6">
-    <div class="card">
-      <img :src="image" class="card-img-top" alt="..." />
-      <div class="card-body">
-        <h5 v-for="item in Categories" :key="item.id">
-          {{ item.name }}
-        </h5>
-        <p>{{ location }}</p>
-
-        <p>Rp.{{ base_price }}</p>
-        <p>{{ description }}</p>
-      </div>
+  <div class="card">
+    <img :src="image" class="card-img-top" alt="..." />
+    <div class="card-body">
+      <h5>{{ name }}</h5>
+      <p v-for="item in Categories" :key="item.id">
+        {{ item.name }}
+      </p>
+      <p>{{ description }}</p>
+      <p>Rp.{{ base_price }}</p>
     </div>
   </div>
 </template>

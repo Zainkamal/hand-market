@@ -4,14 +4,30 @@ import Swal from "sweetalert2";
 import { reactive, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import api from "../plugin/Api";
+import { useAuthStore } from "../store";
 
 const router = useRouter();
-
-const detail = reactive({
-  product: [],
-});
-
 const idDetailItem = useRoute().params.id;
+const detail = reactive({
+  product: {},
+  tawaran: "",
+});
+const posttawar = async () => {
+  const nego = {
+    product_id: idDetailItem,
+    bid_price: detail.tawaran,
+  };
+  await api
+    .post("/buyer/order", nego, {
+      headers: {
+        access_token: useAuthStore().gettoken,
+      },
+    })
+    .then((res) => {
+      detail.tawaran = res.data;
+    });
+};
+
 const getDetailItem = async () => {
   await api.get("/buyer/product/" + idDetailItem).then((Response) => {
     detail.product = Response.data;
@@ -50,7 +66,7 @@ const alert = () => {
       <img :src="detail.product.image_url" class="card-img-top" alt="..." />
       <div class="card-body">
         <span v-for="item in detail.product.Categories" :key="item.id">
-          Name product : {{ item.name }} </span
+          categori : {{ item.name }} </span
         ><br />
         <span>name id : {{ detail.product.name }}</span
         ><br />
@@ -76,8 +92,10 @@ const alert = () => {
     </div>
     <div class="word">
       <div class="top">
-        <h5>Jam Tangan casio</h5>
-        <p>Aksesoris</p>
+        <h5>{{ detail.product.name }}</h5>
+        <span v-for="item in detail.product.Categories" :key="item.id">
+          categori : {{ item.name }} </span
+        ><br />
         <h5 style="top: -8px">Rp 250.000</h5>
         <!-- Button trigger modal -->
         <button
@@ -127,28 +145,30 @@ const alert = () => {
                   style="width: 2rem; height: 2rem"
                 />
                 <div class="nama">
-                  <h5>Alan Bin Suroso</h5>
-                  <p>Bali</p>
+                  <h5>{{ detail.product.User?.full_name ?? "-" }}</h5>
+                  <p>{{ detail.product.User?.city ?? "-" }}</p>
                 </div>
               </div>
 
-              <div class="mb-3 m-3" style="top: -8px">
-                <label for="exampleFormControlInput1" class="form-label"
-                  >Harga Tawaran</label
-                >
-                <input
-                  type="number"
-                  class="form-control"
-                  id="exampleFormControlInput1"
-                  placeholder="Nominal"
-                />
-              </div>
-
-              <div class="modal-footer">
-                <button @click="alert" type="button" class="btn btn-primary">
-                  Kirim
-                </button>
-              </div>
+              <form action="" @submit.prevent="posttawar">
+                <div class="mb-3 m-3" style="top: -8px">
+                  <label for="exampleFormControlInput1" class="form-label"
+                    >Harga Tawaran</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="exampleFormControlInput1"
+                    placeholder="Nominal"
+                    v-model="detail.tawaran"
+                  />
+                </div>
+                <div class="modal-footer">
+                  <button @click="alert" type="submit" class="btn btn-primary">
+                    Kirim
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -159,8 +179,8 @@ const alert = () => {
           alt=""
         />
         <div class="nama">
-          <h5>Alan Bin Suroso</h5>
-          <p>Bali</p>
+          <h5>{{ detail.product.User?.full_name ?? "-" }}</h5>
+          <p>{{ detail.product.User?.city ?? "-" }}</p>
         </div>
       </div>
     </div>
@@ -227,7 +247,7 @@ const alert = () => {
   height: 3rem;
 }
 .bottom h5 {
-  font-size: 15px;
+  font-size: 1rem;
   top: 0.8rem;
 }
 

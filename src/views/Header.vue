@@ -1,5 +1,6 @@
 <script setup>
 import { useAuthStore } from "../store/useAuth";
+import { search } from "../store/index";
 
 const store = useAuthStore();
 
@@ -15,7 +16,12 @@ const onlogout = () => {
           ><img src="../assets/blog-removebg-preview.png" alt=""
         /></router-link>
         <form action="">
-          <input type="text" class="form-control" placeholder="🔎 search" />
+          <input
+            type="text"
+            class="form-control"
+            placeholder="🔎 search"
+            v-model="search"
+          />
         </form>
       </div>
       <div class="right">
@@ -78,21 +84,24 @@ const onlogout = () => {
                 </router-link>
               </li>
               <li>
-                <a class="dropdown-item" href="#"
-                  ><i class="bi bi-gear"></i> Pengaturan Akun</a
+                <router-link :to="{ name: 'Tawaran' }">
+                  <a class="dropdown-item" href="#" FG
+                    ><i class="bi bi-bookmark"></i> Daftar penawaran</a
+                  ></router-link
                 >
               </li>
               <li>
                 <a class="dropdown-item" href="#"
-                  ><i class="bi bi-bookmark"></i> Daftar Simpan</a
+                  ><i class="bi bi-gear"></i> Pengaturan Akun</a
                 >
               </li>
+
               <li @click="onlogout" type="button">
                 <a class="dropdown-item"
                   ><i class="bi bi-box-arrow-right"></i> Keluar</a
                 >
               </li>
-              <p>Version 3.10</p>
+              <p class="dropdown-item">Version 3.10</p>
             </ul>
           </div>
         </div>
@@ -151,9 +160,6 @@ header {
   height: 2rem;
   text-align: center;
 }
-.dropdown-menu {
-  padding: 3px 10px;
-}
 .dropdown-menu .kiri img {
   width: 4.5rem;
   border-radius: 10px;
@@ -185,18 +191,12 @@ header {
 .dropdown-menu p {
   text-align: center;
   font-size: 0.8rem;
-  top: 10px;
   color: rgba(0, 0, 0, 0.603);
 }
 .dropdown-menu li i {
   color: blue;
 }
 @media screen and (max-width: 414px) {
-  header {
-    width: 100%;
-    background-color: rgb(248, 245, 245);
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.315);
-  }
   .drop {
     height: 2rem;
   }
@@ -258,7 +258,6 @@ header {
   .dropdown-menu p {
     text-align: center;
     font-size: 0.5rem;
-    top: 10px;
     color: rgba(0, 0, 0, 0.603);
   }
   .dropdown-menu li i {

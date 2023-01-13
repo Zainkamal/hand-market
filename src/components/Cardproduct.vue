@@ -1,5 +1,5 @@
 <script setup>
-import { string } from "yup";
+import { number, string } from "yup";
 
 defineProps({
   image: {
@@ -19,9 +19,14 @@ defineProps({
     required: true,
   },
   description: {
-    type: string,
+    type: String,
     required: true,
   },
+  price: {
+    type: String,
+    required: true,
+  },
+  status_product: [String],
 });
 </script>
 <template>
@@ -29,11 +34,18 @@ defineProps({
     <img :src="image" class="card-img-top" alt="..." />
     <div class="card-body">
       <h5>{{ name }}</h5>
-      <p v-for="item in Categories" :key="item.id">
-        {{ item.name }}
-      </p>
+      <div class="category">
+        <p v-for="item in Categories" :key="item.id">
+          {{ item.name }}
+        </p>
+      </div>
       <p>{{ description }}</p>
-      <p>Rp.{{ base_price }}</p>
+      <del v-show="base_price"
+        ><p>Rp.{{ base_price }}</p></del
+      >
+      <!-- diminati -->
+      <p>Rp.{{ price }}</p>
+      <p class="badge text-bg-primary">{{ status_product }}</p>
     </div>
   </div>
 </template>
@@ -43,6 +55,7 @@ defineProps({
   width: 100%;
   display: flex;
   height: 18rem;
+  overflow: hidden;
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.637);
 }
 .card img {
@@ -56,6 +69,13 @@ defineProps({
 p {
   font-size: 0.9rem;
 }
+.category {
+  width: 300px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
 @media screen and (max-width: 414px) {
   .card {
     margin-top: 10px;
@@ -66,7 +86,6 @@ p {
   }
   .card img {
     width: 100%;
-    height: 6.5rem;
     object-fit: cover;
     cursor: pointer;
     transition: 400ms;

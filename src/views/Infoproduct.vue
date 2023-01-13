@@ -1,10 +1,11 @@
 <script setup>
 import { reactive, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "../store";
 import kategori from "../plugin/Api";
 import * as Yup from "yup";
 import { Form, Field, ErrorMessage } from "vee-validate";
+import api from "../plugin/Api";
 
 const schema = Yup.object().shape({
   name: Yup.string()
@@ -36,7 +37,29 @@ const formseller = reactive({
   image: null,
   url_image: null,
 });
-
+const idDetailItem = useRoute().params.id;
+const getdata = async () => {
+  await api
+    .get("/seller/product/" + idDetailItem, {
+      headers: {
+        access_token: useAuthStore().gettoken,
+      },
+    })
+    .then((res) => {
+      formseller.name = res.data.name;
+      formseller.description = res.data.description;
+      formseller.base_price = res.data.base_price;
+      for (let i in res.data.Categories) {
+        formseller.category_ids.push(res.data.Categories[i].id);
+      }
+      formseller.location = res.data.location;
+      formseller.url_image = res.data.image_url;
+      formseller.image = res.data.image_name;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 // form binari aplud img
 const doaddseller = () => {
   const formData = new FormData();
@@ -46,7 +69,11 @@ const doaddseller = () => {
   formData.append("category_ids", formseller.category_ids);
   formData.append("image", formseller.image);
   formData.append("location", formseller.location);
-  useAuthStore().addproduct(formData);
+  if (idDetailItem) {
+    useAuthStore().editproduct(idDetailItem, formData);
+  } else {
+    useAuthStore().addproduct(formData);
+  }
 };
 
 const setFile = (e) => {
@@ -65,6 +92,9 @@ const getkategori = async () => {
 
 onMounted(() => {
   getkategori();
+  if (idDetailItem) {
+    getdata();
+  }
 });
 const back = useRouter();
 </script>
@@ -73,7 +103,17 @@ const back = useRouter();
     <div class="left">
       <a @click="back.back"> <i class="bi bi-arrow-left-short"></i></a>
     </div>
+    <div
+      v-if="useAuthStore().loading"
+      class="lds-ellipsis"
+      style="margin: 0 auto"
+    >
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
     <Form
+      v-else
       class="right"
       @submit="doaddseller"
       :validation-schema="schema"
@@ -190,6 +230,7 @@ const back = useRouter();
         name="foto"
         id="fotoProduct"
         class="d-none"
+        v-model="formseller.image"
         @change="setFile"
         :class="{ 'is-invalid': errors.foto }"
       />
@@ -252,6 +293,62 @@ button:hover {
   background-color: #531192;
   color: white;
 }
+.lds-ellipsis {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ellipsis div {
+  position: absolute;
+  top: 33px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: rgb(0, 0, 0);
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+.lds-ellipsis div:nth-child(1) {
+  left: 8px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(2) {
+  left: 8px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(3) {
+  left: 32px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(4) {
+  left: 56px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(24px, 0);
+  }
+}
+
 @media screen and (max-width: 414px) {
   .container {
     display: block;

@@ -30,16 +30,14 @@ const router = useRouter();
 <template>
   <div class="wrap">
     <div class="row">
-      <div
-        class="col-lg-3 col-md-3 col-sm-6 col-6"
-        v-for="item in data.product"
-        :key="item.id"
-      >
+      <div class="box">
         <Mycard
+          v-for="item in data.product"
+          :key="item.id"
           :image="item.image_url"
           :name="item.name"
           :Categories="item.Categories"
-          :base_price="item.base_price"
+          :price="item.base_price"
           @click="router.push('/halaman/' + item.id)"
         />
       </div>
@@ -58,8 +56,6 @@ const router = useRouter();
 }
 .row {
   width: 100%;
-
-  display: flex;
 }
 .tambah {
   width: 100%;
@@ -84,9 +80,20 @@ const router = useRouter();
   margin: 0 auto;
   font-size: 2.5rem;
 }
+.box {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
 @media screen and (max-width: 414px) {
   .wrap {
     justify-content: center;
+  }
+  .row {
+    margin: 0 auto;
+  }
+  .box {
+    grid-template-columns: repeat(1, 1fr);
   }
 }
 </style>

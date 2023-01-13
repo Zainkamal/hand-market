@@ -55,12 +55,21 @@ const router = createRouter({
       component: () => import("../views/Infoproduct.vue"),
     },
     {
+      path: "/infoproduct/:id",
+      component: () => import("../views/Infoproduct.vue"),
+    },
+    {
       path: "/product/:id",
       component: () => import("../views/Producthalaman.vue"),
     },
     {
-      path: "/infopenawaran",
+      path: "/infopenawaran/:id",
       component: () => import("../views/Infopenawaran.vue"),
+    },
+    {
+      path: "/tawaransaya",
+      name: "Tawaran",
+      component: () => import("../views/Tawaransaya.vue"),
     },
   ],
 });

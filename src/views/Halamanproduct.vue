@@ -45,40 +45,46 @@ onMounted(() => {
     <div class="close">
       <a @click="router.back"> <i class="bi bi-arrow-left-short"></i></a>
     </div>
-    <div class="card">
-      <img :src="detail.product.image_url" class="card-img-top" alt="..." />
-      <div class="card-body">
-        <p class="card-text">name product : {{ detail.product.name }}</p>
-        <p v-for="item in detail.product.Categories" :key="item.id">
-          Categories : {{ item.name }}
-        </p>
-        <p class="card-text">description : {{ detail.product.description }}</p>
-        <p class="card-text">base_price : {{ detail.product.base_price }}</p>
-        <p class="card-text">location : {{ detail.product.location }}</p>
-        <p class="card-text">user_id : {{ detail.product.user_id }}</p>
-        <p class="card-text">status : {{ detail.product.status }}</p>
+
+    <div class="card mb-3">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img :src="detail.product.image_url" class="card-img-top" alt="..." />
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <p class="card-text">name product : {{ detail.product.name }}</p>
+            <div class="d-flex justify-content-md-start">
+              <p v-for="item in detail.product.Categories" :key="item.id">
+                {{ item.name }},
+              </p>
+            </div>
+            <p class="card-text">
+              description : {{ detail.product.description }}
+            </p>
+            <p class="card-text">
+              base_price : {{ detail.product.base_price }}
+            </p>
+            <p class="card-text">location : {{ detail.product.location }}</p>
+            <p class="card-text">user_id : {{ detail.product.user_id }}</p>
+            <p class="card-text">status : {{ detail.product.status }}</p>
+          </div>
+        </div>
       </div>
     </div>
     <div class="word">
       <div class="top">
         <h5>{{ detail.product.name }}</h5>
-        <p v-for="item in detail.product.Categories" :key="item.id">
-          Categories : {{ item.name }}
-        </p>
-        <h5 style="top: -8px">Rp {{ detail.product.base_price }}</h5>
-        <router-link to="infoproduct"><button>Edit</button></router-link>
-        <button @click="delet(id)">Hapus</button><br />
-      </div>
-      <div class="bottom d-flex">
-        <img
-          src="../assets/Among_Us_Background_Keren-removebg-preview.png"
-          alt=""
-          style="width: 3rem; height: 3rem"
-        />
-        <div class="nama">
-          <h5>Alan Bin Suroso</h5>
-          <p>Bali</p>
+        <div class="category">
+          <p v-for="item in detail.product.Categories" :key="item.id">
+            Categories : {{ item.name }}
+          </p>
         </div>
+        <h5>Rp {{ detail.product.base_price }}</h5>
+        <router-link :to="`/infoproduct/${detail.product.id}`"
+          ><button>Edit</button></router-link
+        >
+        <button @click="delet(id)">Hapus</button><br />
       </div>
     </div>
   </div>
@@ -86,7 +92,7 @@ onMounted(() => {
 <style scoped>
 .ward {
   margin: 30px auto;
-  width: 80%;
+  width: 95%;
   display: flex;
   justify-content: center;
 }
@@ -96,15 +102,16 @@ onMounted(() => {
 }
 .card {
   width: 40%;
+  box-shadow: 0 0 4px black;
 }
-
 .word {
   margin-left: 15px;
+  max-height: 30vh;
 }
 .word .top {
   box-shadow: 0 0 4px black;
   width: 18rem;
-  height: 13rem;
+
   padding: 5px 12px;
 }
 .word .top button {
@@ -116,24 +123,12 @@ onMounted(() => {
   background-color: #7126b5;
   color: white;
 }
-.bottom {
-  margin-top: 10px;
-  box-shadow: 0 0 4px black;
-  padding: 0 15px;
-  height: 3.5rem;
-  justify-content: flex-start;
-  align-items: center;
-  width: 18rem;
-}
-.bottom img {
-  border-radius: 50%;
-  box-shadow: 0 0 4px black;
-  border: 1px solid black;
-  margin-right: 10px;
-}
-.bottom h5 {
-  font-size: 15px;
-  top: 0.8rem;
+.category {
+  width: 300px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
 }
 @media screen and (max-width: 414px) {
   .ward {
@@ -143,9 +138,6 @@ onMounted(() => {
   }
   .left {
     font-size: 2rem;
-  }
-  .card {
-    width: 100%;
   }
 
   .word {
@@ -166,24 +158,6 @@ onMounted(() => {
   }
   .word .top button:hover {
     background-color: #431172;
-  }
-  .bottom {
-    margin-top: 5px;
-    box-shadow: 0 0 4px black;
-    padding: 0 15px;
-    height: 3.5rem;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
-  }
-  .bottom img {
-    width: 2rem;
-    height: 2rem;
-    margin-right: 10px;
-  }
-  .bottom h5 {
-    font-size: 0.7rem;
-    top: 0.8rem;
   }
 }
 </style>

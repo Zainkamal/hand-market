@@ -1,48 +1,25 @@
 <script setup>
 import { reactive, onMounted, watchEffect } from "vue";
 import api from "../plugin/Api";
-import kategori from "../plugin/Api";
 import Mycard from "../components/Cardproduct.vue";
 import { useRouter } from "vue-router";
 import Swiper from "../components/Swiper.vue";
+import { useAuthStore } from "../store/useAuth";
 
 const data = reactive({
-  product: [],
-  kategori: [],
-  perPage: 30,
-  idkategori: 0,
+  loading: false,
 });
 
-const getdata = async () => {
-  await api
-    .get("/buyer/product", {
-      params: {
-        page: 1,
-        per_page: data.perPage,
-        category_id: data.idkategori || "",
-      },
-    })
-    .then((response) => {
-      data.product = response.data;
-      console.log(response.data);
-    });
-};
-
-const getkategori = async () => {
-  await kategori.get("/seller/category").then((response) => {
-    data.kategori = response.data;
-  });
-};
 const loadMore = () => {
-  data.perPage += 30;
+  useAuthStore().perPage += 30;
 };
 
 watchEffect(() => {
-  getdata();
+  useAuthStore().getdata();
 });
 
 onMounted(() => {
-  getkategori();
+  useAuthStore().getkategori();
 });
 const router = useRouter();
 </script>
@@ -55,36 +32,48 @@ const router = useRouter();
     <div class="filter">
       <button
         class="search"
-        @click="data.idkategori = 0"
-        :class="data.idkategori == 0 ? 'bg-active' : 'bg-unactive'"
+        @click="useAuthStore().idkategori = 0"
+        :class="useAuthStore().idkategori == 0 ? 'bg-active' : 'bg-unactive'"
       >
         🔍 Semua
       </button>
       <button
-        v-for="(item, index) in data.kategori"
+        v-for="(item, index) in useAuthStore().kategori"
         :key="index"
-        @click="data.idkategori = item.id"
-        :class="data.idkategori == item.id ? 'bg-active' : 'bg-unactive'"
+        @click="useAuthStore().idkategori = item.id"
+        :class="
+          useAuthStore().idkategori == item.id ? 'bg-active' : 'bg-unactive'
+        "
         class="search"
       >
         🔍
         {{ item.name }}
       </button>
     </div>
+    <div v-if="useAuthStore().loading" class="row g-3 mt-3">
+      <div v-for="item in 12" :key="item" class="col-lg-2">
+        <div class="card">
+          <div class="card-body d-flex flex-column gap-2">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <div class="wrap">
+    <div v-else class="wrap">
       <div class="row">
-        <div
-          class="col-lg-2 col-md-3 col-sm-6 col-6"
-          v-for="item in data.product"
-          :key="item.id"
-        >
+        <div class="box">
           <!-- :namecategori="item.categories" -->
           <Mycard
+            v-for="item in useAuthStore().data"
+            :key="item.id"
             :image="item.image_url"
             :name="item.name"
             :Categories="item.Categories"
-            :base_price="item.base_price"
+            :price="item.base_price"
             :description="item.description"
             @click="router.push('/product/' + item.id)"
           />
@@ -166,6 +155,11 @@ aside .wrap .clik:hover {
   background-color: #7126b5;
   color: white;
 }
+.box {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+}
 footer {
   bottom: 1.5rem;
   display: flex;
@@ -180,8 +174,31 @@ footer button {
   border-radius: 10px;
   padding: 3px 10px;
 }
+.card-body div {
+  border-radius: 5px;
+  animation: skeleton-loading 1s linear infinite alternate;
+}
 
-@media (max-width: 576px) {
+@keyframes skeleton-loading {
+  0% {
+    background-color: rgba(228, 227, 227, 0.322);
+  }
+  100% {
+    background-color: rgb(228, 227, 227);
+  }
+}
+.card-body div:first-child {
+  width: 100%;
+  height: 8rem;
+  background-color: rgb(228, 227, 227);
+}
+.card-body div {
+  width: 100%;
+  height: 1rem;
+  background-color: rgb(228, 227, 227);
+}
+
+@media (max-width: 414px) {
   aside {
     margin-top: 0;
   }
@@ -198,6 +215,14 @@ footer button {
   }
   .filter::-webkit-scrollbar {
     height: 6px;
+  }
+  .row {
+    width: 100%;
+    margin: 0 auto;
+  }
+  .box {
+    grid-template-columns: repeat(1, 1fr);
+    width: 100%;
   }
 }
 </style>

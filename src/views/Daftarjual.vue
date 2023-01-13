@@ -1,28 +1,17 @@
 <script setup>
 import Swal from "sweetalert2";
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, watchEffect } from "vue";
 import api from "../plugin/Api";
 import NavbarVue from "../components/Navbar.vue";
 import { RouterView } from "vue-router";
 import { useAuthStore } from "../store";
 
-const datauser = reactive({
-  user: {},
+watchEffect(() => {
+  useAuthStore().getuser();
 });
-
-const getuser = async () => {
-  await api
-    .get("/auth/user", {
-      headers: {
-        access_token: useAuthStore().gettoken,
-      },
-    })
-    .then((res) => {
-      datauser.user = res.data;
-      console.log(res.data);
-    });
-};
-const avatar = `https://ui-avatars.com/api/?name=${datauser.user.image_url}`;
+const avatar = `https://ui-avatars.com/api/?name=${
+  useAuthStore().user.image_url
+}`;
 
 // alert
 const Toast = Swal.mixin({
@@ -44,9 +33,9 @@ const alert = () => {
     title: "Signed in successfully",
   });
 };
-onMounted(() => {
-  getuser();
-});
+// onMounted(() => {
+//   getuser();
+// });
 </script>
 <template>
   <div class="wrap">
@@ -55,10 +44,10 @@ onMounted(() => {
     </header>
     <main>
       <div class="profil">
-        <img :src="datauser.user.image_url ?? avatar" alt="" />
+        <img :src="useAuthStore().user.image_url ?? avatar" alt="" />
         <div class="data">
-          <h3>{{ datauser.user.full_name }}</h3>
-          <p>{{ datauser.user.city ?? "-" }}</p>
+          <h3>{{ useAuthStore().user.full_name }}</h3>
+          <p>{{ useAuthStore().user.city ?? "-" }}</p>
         </div>
       </div>
       <!-- <button @click="alert">Edit</button> -->
@@ -92,6 +81,7 @@ main {
 }
 main .profil {
   display: flex;
+  height: auto;
   align-items: center;
   margin-left: 1rem;
 }
@@ -109,6 +99,7 @@ main .profil .data h3 {
 }
 main .profil .data p {
   font-size: 12px;
+  margin: 10px 0;
 }
 main button {
   border-radius: 10px;
@@ -151,7 +142,7 @@ aside {
     border-radius: 10px;
     font-size: 0.5rem;
     width: 3rem;
-    margin-right: 10px;
+    margin: 5px 5px;
   }
   aside {
     display: block;

@@ -71,6 +71,15 @@ const router = createRouter({
       name: "Tawaran",
       component: () => import("../views/Tawaransaya.vue"),
     },
+    {
+      path: "/profil",
+      component: () => import("../views/Profil.vue"),
+    },
+    {
+      path: "/wishlist",
+      name: "wishlist",
+      component: () => import("../views/Wishlist.vue"),
+    },
   ],
 });
 

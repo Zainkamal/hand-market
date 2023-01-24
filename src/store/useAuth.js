@@ -18,10 +18,14 @@ export const useAuthStore = defineStore("auth", {
     order: {},
     detailorder: {},
     buyerorder: [],
+    notification: [],
   }),
   getters: {
     gettoken() {
       return this.userData?.access_token;
+    },
+    notif() {
+      return this.notification.length;
     },
   },
   actions: {
@@ -185,6 +189,17 @@ export const useAuthStore = defineStore("auth", {
         })
         .then((res) => {
           this.buyerorder = res.data;
+        });
+    },
+    async getnotification() {
+      await api
+        .get("/notification", {
+          headers: {
+            access_token: useAuthStore().gettoken,
+          },
+        })
+        .then((res) => {
+          this.notification = res.data;
         });
     },
   },

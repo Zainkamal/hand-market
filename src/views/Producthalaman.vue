@@ -1,10 +1,13 @@
 <script setup>
 import axios from "axios";
 import Swal from "sweetalert2";
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import api from "../plugin/Api";
-import { useAuthStore } from "../store";
+import { useAuthStore, useWhishlistStore } from "../store";
+import MyModal from "../components/MyModal.vue";
+
+const showModal = ref(false);
 
 const router = useRouter();
 const idDetailItem = useRoute().params.id;
@@ -12,6 +15,20 @@ const detail = reactive({
   product: {},
   tawaran: "",
 });
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top",
+  showConfirmButton: false,
+  timer: 2000,
+  background: "green",
+  color: "white",
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.addEventListener("mouseenter", Swal.stopTimer);
+    toast.addEventListener("mouseleave", Swal.resumeTimer);
+  },
+});
+
 const posttawar = async () => {
   const nego = {
     product_id: idDetailItem,
@@ -24,7 +41,39 @@ const posttawar = async () => {
       },
     })
     .then((res) => {
+      showModal.value = false;
       detail.tawaran = res.data;
+      Toast.fire({
+        icon: "success",
+        title: "Signed in successfully",
+      });
+    })
+    .catch((error) => {
+      showModal.value = false;
+      Toast.fire({
+        title: "your bid failed,This product has maximum orders",
+      });
+    });
+};
+const postwishlist = () => {
+  useWhishlistStore()
+    .postWishlist(idDetailItem)
+    .then(() => {
+      useAuthStore().getbuyerorder();
+      useWhishlistStore().getWishlist();
+    });
+};
+const isWislist = computed(() => {
+  return useWhishlistStore().wishlist.find((e) => {
+    return e.product_id == idDetailItem;
+  });
+});
+const deletwishlist = () => {
+  useWhishlistStore()
+    .delWishlist(isWislist.value.id)
+    .then(() => {
+      useAuthStore().getbuyerorder();
+      useWhishlistStore().getWishlist();
     });
 };
 
@@ -34,28 +83,11 @@ const getDetailItem = async () => {
     console.log(Response.data);
   });
 };
+
 onMounted(() => {
   getDetailItem();
+  useWhishlistStore().getWishlist();
 });
-const Toast = Swal.mixin({
-  toast: true,
-  position: "top",
-  showConfirmButton: false,
-  timer: 3000,
-  background: "green",
-  color: "white",
-  timerProgressBar: true,
-  didOpen: (toast) => {
-    toast.addEventListener("mouseenter", Swal.stopTimer);
-    toast.addEventListener("mouseleave", Swal.resumeTimer);
-  },
-});
-const alert = () => {
-  Toast.fire({
-    icon: "success",
-    title: "Signed in successfully",
-  });
-};
 </script>
 <template>
   <div class="warp">
@@ -92,92 +124,102 @@ const alert = () => {
     </div>
     <div class="word">
       <div class="top">
-        <h5>{{ detail.product.name }}</h5>
+        <div class="tops d-flex justify-content-between">
+          <h5>{{ detail.product.name }}</h5>
+          <div class="" v-if="isWislist">
+            <h5>
+              <i
+                class="ri-heart-fill"
+                style="color: red"
+                @click="deletwishlist"
+              ></i>
+            </h5>
+          </div>
+          <div class="" v-else="postwishlist">
+            <h5>
+              <i
+                class="ri-heart-fill"
+                style="color: black; width: 1rem"
+                @click="postwishlist(idDetailItem)"
+              ></i>
+            </h5>
+          </div>
+        </div>
         <span v-for="item in detail.product.Categories" :key="item.id">
           categori : {{ item.name }} </span
         ><br />
-        <h5 style="top: -8px">Rp 250.000</h5>
+        <h5>{{ detail.product.base_price }}</h5>
+
         <!-- Button trigger modal -->
-        <button
-          type="button"
-          class="btn btn-primary"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
-        >
-          Saya tertarik
-        </button>
-
+        <button id="show-modal" @click="showModal = true">Tawar</button>
         <!-- Modal -->
-        <div
-          class="modal fade"
-          id="exampleModal"
-          tabindex="-1"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog" style="width: 20rem">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">
-                  Masukkan Harga Tawarmu
-                </h5>
-                <button
-                  type="button"
-                  class="btn-close btn-outline-primary"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                  style="width: 1rem"
-                ></button>
-              </div>
-              <div class="modal-body">
-                <p>
-                  Harga tawaranmu akan diketahui penual, jika penjual cocok kamu
-                  akan segera dihubungi penjual.
-                </p>
-              </div>
-              <div
-                class="bottom d-flex"
-                style="height: 3rem; margin-left: 15px; top: -20px"
-              >
-                <img
-                  src="../assets/Among_Us_Background_Keren-removebg-preview.png"
-                  alt=""
-                  style="width: 2rem; height: 2rem"
-                />
-                <div class="nama">
-                  <h5>{{ detail.product.User?.full_name ?? "-" }}</h5>
-                  <p>{{ detail.product.User?.city ?? "-" }}</p>
-                </div>
-              </div>
-
-              <form action="" @submit.prevent="posttawar">
-                <div class="mb-3 m-3" style="top: -8px">
-                  <label for="exampleFormControlInput1" class="form-label"
-                    >Harga Tawaran</label
+        <Teleport to="body">
+          <!-- use the modal component, pass in the prop -->
+          <MyModal :show="showModal" @close="showModal = false">
+            <template #body>
+              <div class="modal-dialog" style="max-width: 400px">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                      Masukkan Harga Tawarmu
+                    </h5>
+                    <button
+                      type="button"
+                      class="btn-close btn-outline-primary"
+                      @click="showModal = false"
+                      aria-label="Close"
+                      style="width: 1rem"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>
+                      Harga tawaranmu akan diketahui penual, jika penjual cocok
+                      kamu akan segera dihubungi penjual.
+                    </p>
+                  </div>
+                  <div
+                    class="bottom d-flex"
+                    style="height: 3rem; margin-left: 15px; top: -20px"
                   >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="exampleFormControlInput1"
-                    placeholder="Nominal"
-                    v-model="detail.tawaran"
-                  />
+                    <img
+                      src="../assets/Among_Us_Background_Keren-removebg-preview.png"
+                      alt=""
+                      style="width: 2rem; height: 2rem"
+                    />
+                    <div class="nama">
+                      <h5>{{ detail.product.User?.full_name ?? "-" }}</h5>
+                      <p>{{ detail.product.User?.city ?? "-" }}</p>
+                    </div>
+                  </div>
+
+                  <form action="" @submit.prevent="posttawar">
+                    <div class="mb-3 m-3" style="top: -8px">
+                      <label for="exampleFormControlInput1" class="form-label"
+                        >Harga Tawaran</label
+                      >
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="exampleFormControlInput1"
+                        placeholder="Nominal"
+                        v-model="detail.tawaran"
+                      />
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary">
+                        Kirim
+                      </button>
+                    </div>
+                  </form>
                 </div>
-                <div class="modal-footer">
-                  <button @click="alert" type="submit" class="btn btn-primary">
-                    Kirim
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+              </div>
+            </template>
+          </MyModal>
+        </Teleport>
       </div>
+
       <div class="bottom d-flex">
-        <img
-          src="../assets/Among_Us_Background_Keren-removebg-preview.png"
-          alt=""
-        />
+        <img :src="detail.product.User?.image_url" alt="" />
         <div class="nama">
           <h5>{{ detail.product.User?.full_name ?? "-" }}</h5>
           <p>{{ detail.product.User?.city ?? "-" }}</p>

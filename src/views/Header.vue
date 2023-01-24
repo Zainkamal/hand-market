@@ -1,19 +1,26 @@
 <script setup>
 import { useAuthStore } from "../store/useAuth";
 import { search } from "../store/index";
+import { onMounted, watchEffect } from "vue";
 
 const store = useAuthStore();
 
 const onlogout = () => {
   store.logout();
 };
+watchEffect(() => {
+  useAuthStore().getuser();
+});
+onMounted(() => {
+  useAuthStore().getnotification();
+});
 </script>
 <template>
   <header class="sticky-top zindex-toast">
     <div class="drop">
       <div class="left">
         <router-link to="/"
-          ><img src="../assets/blog-removebg-preview.png" alt=""
+          ><img src="../assets/images-removebg-preview.png" alt=""
         /></router-link>
         <form action="">
           <input
@@ -38,23 +45,70 @@ const onlogout = () => {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <a class="icon" href=""><i class="bi bi-bell-fill"></i></a>
+              <i class="bi bi-bell-fill"></i>
             </a>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <li class="d-flex">
-                <div class="kiri">
-                  <img src="../assets/jam tangan.jfif" alt="" />
+            <span class="notif_number">{{ useAuthStore().notif }}</span>
+            <div
+              class="dropdown-menu"
+              aria-labelledby="dropdownMenuLink"
+              style="width: 400px; max-height: 300px; overflow: auto"
+            >
+              <div class="boox">
+                <div class="hed">
+                  <h5 style="margin-left: 5px">notification</h5>
                 </div>
-                <div class="tengah">
-                  <p>Penawaran Product</p>
-                  <h5>Jamtangan Sepeda</h5>
-                  <h5>Ditawar 200.000</h5>
+                <div
+                  class="boxs d-flex"
+                  v-for="item in useAuthStore().notification"
+                  :key="item.id"
+                >
+                  <div class="box">
+                    <img :src="item.image_url" alt="" />
+                  </div>
+                  <div class="ket" style="width: 100%; padding: 0 5px">
+                    <div class="pinggir d-flex justify-content-between">
+                      <p>
+                        {{ item.notification_type }}
+                      </p>
+                      <p v-if="item.status == 'create'">
+                        product berhasil di terbitkan
+                      </p>
+                      <p v-if="item.status == 'bid'">penawaran product</p>
+                      <p v-if="item.status == 'accepted'">Penawaran diterima</p>
+                      <p v-if="item.status == 'diclined'">penawaran ditolak</p>
+
+                      <p>{{ item.updatedAt }}</p>
+                    </div>
+                    <h5>{{ item.product_name }}</h5>
+                    <div class="harga d-flex gap-1">
+                      <div class="" v-if="item.notification_type == 'seller'">
+                        <p v-if="item.status == 'create'">
+                          {{ item.base_price }}
+                        </p>
+                        <div
+                          class="bid d-flex gap-1"
+                          v-if="item.status == 'bid'"
+                        >
+                          <del>Rp.{{ item.base_price }}</del>
+                          <p>Ditawar</p>
+                          <p>Rp.{{ item.bid_price }}</p>
+                        </div>
+                      </div>
+                      <div class="" v-if="item.notification_type == 'buyer'">
+                        <div
+                          class="bid d-flex gap-1"
+                          v-if="item.status == 'accepted' || 'diclined'"
+                        >
+                          <del>Rp.{{ item.base_price }}</del>
+                          <p>Ditawar</p>
+                          <p>Rp.{{ item.bid_price }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="kanan" style="width: 5rem">
-                  <p>24 mart,14.00</p>
-                </div>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
           <div class="dropdown">
             <a
@@ -65,7 +119,11 @@ const onlogout = () => {
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <i class="bi bi-person-heart"></i>
+              <img
+                :src="useAuthStore().user.image_url"
+                alt=""
+                style="width: 35px; height: 35px; border-radius: 50%"
+              />
             </a>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <span>Akun Saya</span>
@@ -77,6 +135,14 @@ const onlogout = () => {
                 </router-link>
               </li>
               <li>
+                <router-link to="/profil">
+                  <a class="dropdown-item" href="#"
+                    ><i class="bi bi-person-fill"></i> Profile</a
+                  >
+                </router-link>
+              </li>
+
+              <li>
                 <router-link to="/infoprofile">
                   <a class="dropdown-item" href="#"
                     ><i class="bi bi-pencil"></i> Ubah Akun</a
@@ -84,15 +150,17 @@ const onlogout = () => {
                 </router-link>
               </li>
               <li>
-                <router-link :to="{ name: 'Tawaran' }">
+                <router-link to="/tawaransaya">
                   <a class="dropdown-item" href="#" FG
                     ><i class="bi bi-bookmark"></i> Daftar penawaran</a
                   ></router-link
                 >
               </li>
               <li>
-                <a class="dropdown-item" href="#"
-                  ><i class="bi bi-gear"></i> Pengaturan Akun</a
+                <router-link to="/wishlist">
+                  <a class="dropdown-item" href="#" FG
+                    ><i class="bi bi-box2-heart"></i> wishlist</a
+                  ></router-link
                 >
               </li>
 
@@ -118,7 +186,7 @@ const onlogout = () => {
 <style scoped>
 header {
   width: 100%;
-  background-color: #023b6d;
+  background-color: #3c88ca;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.315);
 }
 .drop {
@@ -153,12 +221,37 @@ header {
   font-size: 1.3rem;
 }
 .right button {
-  background-color: #7126b5;
   border-radius: 10px;
   font-size: 0.9rem;
   width: 5rem;
   height: 2rem;
   text-align: center;
+  background-color: rgb(0, 10, 95);
+}
+.boxs {
+  border-top: 1px solid black;
+  padding: 5px 0;
+  margin-top: 5px;
+}
+.box {
+  width: 100px;
+  height: 80px;
+  margin-left: 5px;
+}
+.box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ket .pinggir p {
+  font-size: 0.7rem;
+}
+.ket h5 {
+  font-size: 1.2rem;
+}
+.ket .harga del,
+p {
+  font-size: 0.8rem;
 }
 .dropdown-menu .kiri img {
   width: 4.5rem;
@@ -196,6 +289,16 @@ header {
 .dropdown-menu li i {
   color: blue;
 }
+.notif_number {
+  position: absolute;
+  background-color: red;
+  padding: 1px 6px;
+  font-size: 0.7rem;
+  border-radius: 50%;
+  left: 18px;
+  top: -3px;
+  box-shadow: 1px 1px 2px wheat;
+}
 @media screen and (max-width: 414px) {
   .drop {
     height: 2rem;
@@ -220,7 +323,7 @@ header {
     font-size: 1rem;
   }
   .right button {
-    background-color: #7126b5;
+    background-color: #1b1485;
     border-radius: 10px;
     font-size: 0.7rem;
     height: 1.5rem;

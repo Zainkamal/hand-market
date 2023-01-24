@@ -58,7 +58,7 @@ const back = useRouter();
 <template>
   <div class="drop sticky-top zindex-toast">
     <router-link to="/"
-      ><img src="../assets/21-removebg-preview.png" alt=""
+      ><img src="../assets/images-removebg-preview.png" alt=""
     /></router-link>
     <div class="not">
       <div class="title">

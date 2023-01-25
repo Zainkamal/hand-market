@@ -181,11 +181,11 @@ onMounted(() => {
                     class="bottom d-flex"
                     style="height: 3rem; margin-left: 15px; top: -20px"
                   >
-                    <img
-                      src="../assets/Among_Us_Background_Keren-removebg-preview.png"
+                    <!-- <img
+                      src="#"
                       alt=""
                       style="width: 2rem; height: 2rem"
-                    />
+                    /> -->
                     <div class="nama">
                       <h5>{{ detail.product.User?.full_name ?? "-" }}</h5>
                       <p>{{ detail.product.User?.city ?? "-" }}</p>

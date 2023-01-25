@@ -31,6 +31,9 @@ watchEffect(() => {
   </div>
 </template>
 <style scoped>
+.wew {
+  color: red;
+}
 .kosong {
   width: 100%;
   display: flex;

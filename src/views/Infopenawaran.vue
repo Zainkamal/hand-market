@@ -27,7 +27,7 @@ onMounted(() => {
 <template>
   <div class="drop sticky-top zindex-toast">
     <router-link to="/"
-      ><img src="../assets/blog-removebg-preview.png" alt=""
+      ><img src="../assets/images-removebg-preview.png" alt=""
     /></router-link>
     <div class="not">
       <div class="title">
@@ -152,11 +152,7 @@ onMounted(() => {
                   @click="onStatus('accepted')"
                 >
                   Hubungi Via whatshapp
-                  <img
-                    src="../assets/whatsapp.png"
-                    alt=""
-                    style="width: 1.5rem"
-                  />
+                  <i class="ri-send-plane-2-line"></i>
                 </button>
               </div>
             </div>

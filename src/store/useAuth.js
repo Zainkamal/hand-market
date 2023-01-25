@@ -141,11 +141,11 @@ export const useAuthStore = defineStore("auth", {
         .then((res) => {
           router.push("/daftarjual");
           Swal.fire({
-            position: "top-end",
+            position: "top-center",
             icon: "success",
             title: "Data Berhasil di simpan",
             showConfirmButton: false,
-            timer: 1500,
+            timer: 1000,
           });
         });
     },

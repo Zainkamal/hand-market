@@ -26,7 +26,7 @@ watchEffect(() => {
       </div>
     </div>
   </div>
-  <div v-else class="kosong"><img src="../assets/Frame 34.png" alt="" /></div>
+  <div v-else class="kosong"><img src="../assets/Frame-34.png" alt="" /></div>
 </template>
 <style scoped>
 .kosong {

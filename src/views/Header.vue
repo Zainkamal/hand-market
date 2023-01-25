@@ -47,7 +47,9 @@ onMounted(() => {
             >
               <i class="bi bi-bell-fill"></i>
             </a>
-            <span class="notif_number">{{ useAuthStore().notif }}</span>
+            <div class="notif">
+              <span class="notif_number">{{ useAuthStore().notif }}</span>
+            </div>
             <div
               class="dropdown-menu"
               aria-labelledby="dropdownMenuLink"
@@ -122,7 +124,7 @@ onMounted(() => {
               <img
                 :src="useAuthStore().user.image_url"
                 alt=""
-                style="width: 35px; height: 35px; border-radius: 50%"
+                class="profile"
               />
             </a>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -253,6 +255,11 @@ header {
 p {
   font-size: 0.8rem;
 }
+.profile {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
 .dropdown-menu .kiri img {
   width: 4.5rem;
   border-radius: 10px;
@@ -289,7 +296,7 @@ p {
 .dropdown-menu li i {
   color: blue;
 }
-.notif_number {
+.notif {
   position: absolute;
   background-color: red;
   padding: 1px 6px;
@@ -365,6 +372,20 @@ p {
   }
   .dropdown-menu li i {
     color: blue;
+  }
+  .notif {
+    width: 10px;
+    height: 10px;
+    font-size: 0.5rem;
+    left: 10px;
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .profile {
+    width: 20px;
+    height: 20px;
   }
 }
 </style>

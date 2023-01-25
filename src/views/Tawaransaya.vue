@@ -237,7 +237,7 @@ onClickOutside(el, close);
                 />
               </div>
               <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Kirim</button>
+                <button type="submit" class="btn btn-primary">Edit</button>
               </div>
             </form>
           </div>

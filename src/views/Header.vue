@@ -72,7 +72,7 @@ onMounted(() => {
             <div
               class="dropdown-menu"
               aria-labelledby="dropdownMenuLink"
-              style="width: 400px; max-height: 300px; overflow: auto"
+              style="max-width: 400px; max-height: 300px; overflow: auto"
             >
               <div class="boox">
                 <div class="hed">
@@ -84,8 +84,6 @@ onMounted(() => {
                   :key="item.id"
                   @click="pergiKe(item)"
                 >
-                  <span v-if="!item.read">belom dibaca</span>
-
                   <div class="box">
                     <img :src="item.image_url" alt="" />
                   </div>
@@ -129,6 +127,7 @@ onMounted(() => {
                         </div>
                       </div>
                     </div>
+                    <div class="not" v-if="!item.read"></div>
                   </div>
                 </div>
               </div>
@@ -257,6 +256,7 @@ header {
   padding: 5px 0;
   margin-top: 5px;
 }
+
 .box {
   width: 100px;
   height: 80px;
@@ -276,6 +276,13 @@ header {
 .ket .harga del,
 p {
   font-size: 0.8rem;
+}
+.not {
+  float: right;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background-color: red;
 }
 .profile {
   width: 35px;
@@ -404,6 +411,30 @@ p {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+  .boxs {
+    max-width: 300px;
+    padding: 3px 0;
+    margin-top: 3px;
+  }
+  .box {
+    width: 50px;
+    height: 40px;
+    margin-left: 5px;
+  }
+  .ket .pinggir p {
+    font-size: 0.4rem;
+  }
+  .ket h5 {
+    font-size: 0.6rem;
+  }
+  .ket .harga del,
+  p {
+    font-size: 0.5rem;
+  }
+  .not {
+    width: 7px;
+    height: 7px;
   }
   .profile {
     width: 20px;

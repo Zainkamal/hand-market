@@ -195,11 +195,26 @@ export const useAuthStore = defineStore("auth", {
       await api
         .get("/notification", {
           headers: {
-            access_token: useAuthStore().gettoken,
+            access_token: this.gettoken,
           },
         })
         .then((res) => {
           this.notification = res.data;
+        });
+    },
+    async pathnotifcation(id) {
+      await api
+        .patch(
+          "/notification/" + id,
+          {},
+          {
+            headers: {
+              access_token: useAuthStore().gettoken,
+            },
+          }
+        )
+        .then(() => {
+          this.getnotification();
         });
     },
   },

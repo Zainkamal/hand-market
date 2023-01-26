@@ -2,8 +2,27 @@
 import { useAuthStore } from "../store/useAuth";
 import { search } from "../store/index";
 import { onMounted, watchEffect } from "vue";
+import router from "../router";
 
 const store = useAuthStore();
+
+const pergiKe = (item) => {
+  useAuthStore().pathnotifcation(item.id);
+  if (item.notification_type === "seller") {
+    if (item.status === "bid") {
+      router.push("/infopenawaran/" + item.order_id);
+    } else if (item.status === "create") {
+      router.push("/halaman/" + item.product_id);
+    } else {
+      alert("notification tidak dikenali");
+    }
+  } else if (item.notification_type === "buyer") {
+    router.push("/tawaransaya");
+  } else {
+    alert("notification tidak dikenali");
+  }
+  console.log(item);
+};
 
 const onlogout = () => {
   store.logout();
@@ -63,7 +82,10 @@ onMounted(() => {
                   class="boxs d-flex"
                   v-for="item in useAuthStore().notification"
                   :key="item.id"
+                  @click="pergiKe(item)"
                 >
+                  <span v-if="!item.read">belom dibaca</span>
+
                   <div class="box">
                     <img :src="item.image_url" alt="" />
                   </div>

@@ -20,6 +20,12 @@
           <i class="bi bi-arrow-right-circle"></i
         ></a>
       </router-link>
+      <router-link to="statistik">
+        <a class="nav-link" href="#"
+          ><i class="ri-pie-chart-fill"> statistik</i>
+          <i class="bi bi-arrow-right-circle"></i
+        ></a>
+      </router-link>
     </div>
   </nav>
 </template>

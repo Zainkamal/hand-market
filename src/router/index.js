@@ -28,6 +28,10 @@ const router = createRouter({
               path: "/terjual",
               component: () => import("../components/Terjual.vue"),
             },
+            {
+              path: "/statistik",
+              component: () => import("../components/Statistik.vue"),
+            },
           ],
         },
       ],

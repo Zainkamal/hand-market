@@ -1,29 +1,11 @@
 <script setup>
-import { reactive, onMounted } from "vue";
-import api from "../plugin/Api";
+import { onMounted } from "vue";
 import Mycard from "../components/Cardproduct.vue";
 import { useRoute, useRouter } from "vue-router";
-import { useAuthStore } from "../store/useAuth";
-const data = reactive({
-  product: [],
-});
-const getdata = async () => {
-  await api
-    .get("/seller/product", {
-      headers: {
-        access_token: useAuthStore().gettoken,
-      },
-    })
-    .then((response) => {
-      data.product = response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
+import { useSellerProduct } from "../store/useSellerProduct";
 
 onMounted(() => {
-  getdata();
+  useSellerProduct().getSellerProduct();
 });
 const router = useRouter();
 </script>
@@ -32,7 +14,7 @@ const router = useRouter();
     <div class="row">
       <div class="box">
         <Mycard
-          v-for="item in data.product"
+          v-for="item in useSellerProduct().product"
           :key="item.id"
           :image="item.image_url"
           :name="item.name"

@@ -33,6 +33,7 @@
 .nav {
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.637);
   width: 16rem;
+  height: auto;
   padding: 15px 3px 30px 3px;
   max-height: 13rem;
   display: block;
@@ -40,6 +41,7 @@
 }
 .link {
   display: block;
+  width: 100%;
 }
 
 .nav .nav-link {
@@ -51,20 +53,20 @@
   .nav {
     box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.637);
     width: 100%;
-    padding: 0 3px;
-    max-height: 13rem;
+    height: auto;
+    padding: 0 5px;
     display: flex;
     margin-bottom: 10px;
   }
   .link {
     display: flex;
     justify-content: center;
-    gap: 8px;
+    gap: 5px;
   }
   .nav .nav-link {
-    display: flex;
+    display: block;
     justify-content: space-between;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     gap: 4px;
     margin-bottom: 9px;
     box-shadow: 0 0 2px black;

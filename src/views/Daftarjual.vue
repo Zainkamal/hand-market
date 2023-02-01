@@ -55,7 +55,6 @@ const alert = () => {
     </main>
     <aside>
       <NavbarVue></NavbarVue>
-
       <RouterView />
     </aside>
   </div>
@@ -70,7 +69,7 @@ header {
   padding-top: 15px;
 }
 aside {
-  display: grid;
+  display: flex;
   grid-template-columns: repeat(200px, auto);
 }
 main {

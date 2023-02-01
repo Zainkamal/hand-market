@@ -25,15 +25,16 @@ onMounted(() => {
         <div class="atas d-flex justify-content-between">
           <p>id : {{ useAuthStore().user.id }}</p>
           <div class="ttg">
-            <p>createdAt : {{ useAuthStore().user.createdAt }}</p>
             <p>updatedAt : {{ useAuthStore().user.updatedAt }}</p>
           </div>
         </div>
-        <h5>full_name : {{ useAuthStore().user.full_name }}</h5>
-        <p>email : {{ useAuthStore().user.email }}</p>
-        <p>phone_number : {{ useAuthStore().user.phone_number }}</p>
-        <p>city : {{ useAuthStore().user.city }}</p>
-        <p>address : {{ useAuthStore().user.address }}</p>
+        <div class="buttom">
+          <h5>{{ useAuthStore().user.full_name }}</h5>
+          <p>email : {{ useAuthStore().user.email }}</p>
+          <p>phone_number : {{ useAuthStore().user.phone_number }}</p>
+          <p>city : {{ useAuthStore().user.city }}</p>
+          <p>address : {{ useAuthStore().user.address }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -59,6 +60,8 @@ onMounted(() => {
 .left .img {
   width: 100%;
   height: 300px;
+  box-shadow: 0 0 2px black;
+  padding: 5px;
 }
 .left .img img {
   width: 100%;
@@ -79,5 +82,56 @@ onMounted(() => {
 .right {
   width: 70%;
   margin-left: 10px;
+}
+.right .atas {
+  font-size: 0.8rem;
+  border: 1px solid black;
+  box-shadow: 0 0 2px black;
+  padding: 0 5px;
+}
+.right .buttom {
+  border: 1px solid black;
+  margin-top: 15px;
+  box-shadow: 0 0 2px black;
+  padding: 5px;
+}
+@media screen and (max-width: 716px) {
+  .box {
+    display: block;
+  }
+  .left {
+    width: 100%;
+  }
+  .left .img {
+    margin: 0 auto;
+    width: 80%;
+    height: 300px;
+    box-shadow: 0 0 0px black;
+  }
+  .left .img img {
+    border-radius: 50%;
+  }
+  .left button {
+    width: 100%;
+  }
+  .right {
+    width: 100%;
+    margin: 10px 0;
+  }
+  .right .atas {
+    font-size: 0.8rem;
+    border: 1px solid rgba(0, 0, 0, 0.603);
+    box-shadow: 0 0 2px black;
+    padding: 0 5px;
+  }
+  .right .buttom {
+    border: 1px solid rgba(0, 0, 0, 0.603);
+    margin-top: 15px;
+    box-shadow: 0 0 2px black;
+    padding: 5px;
+  }
+  .buttom h5 {
+    text-align: center;
+  }
 }
 </style>

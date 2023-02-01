@@ -15,7 +15,7 @@ export const useAuthStore = defineStore("auth", {
     idkategori: 0,
     perPage: 30,
     user: {},
-    order: {},
+    order: [],
     detailorder: {},
     buyerorder: [],
     notification: [],
